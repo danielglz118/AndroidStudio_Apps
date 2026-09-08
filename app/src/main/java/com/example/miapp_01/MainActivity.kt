@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -49,51 +50,117 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             MiAPP_01Theme {
-                Formulario()
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    Formulario(innerPadding = innerPadding)
+                }
             }
         }
     }
-}
 
-@Composable
-fun Formulario() {
+    @Composable
+    fun Formulario(innerPadding: PaddingValues) {
+        var contador1 by remember { mutableStateOf(0) }
+        var contador2 by remember { mutableStateOf(0) }
 
-    var contador by remember { mutableStateOf(0) }
-
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-
-        Box(
+        Column(
             modifier = Modifier
-                .size(150.dp)
-                .background(Color.Blue, CircleShape),
-            contentAlignment = Alignment.Center
+                .fillMaxSize()
+                .padding(innerPadding)
+                .wrapContentSize(Alignment.Center),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            Text(
-                text = contador.toString(),
-                fontSize = 48.sp,
-                color = Color.White
-            )
-        }
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Button(
+                        onClick = {},
+                        shape = CircleShape,
+                        modifier = Modifier.size(155.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
+                    ) {
+                        Text(
+                            text = "$contador1",
+                            fontSize = 50.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    }
 
-        Spacer(modifier = Modifier.height(40.dp))
+                    Spacer(modifier = Modifier.height(20.dp))
 
-        Button(
-            onClick = {},
-            modifier = Modifier
-                .width(200.dp)
-                .height(60.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF536A99)
-            )
-        ) {
-            Text(
-                "Sumar",
-                fontSize = 24.sp
-            )
+                    Button(
+                        onClick = { contador1++ },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
+                    ) {
+                        Text(text = "Sumar", fontWeight = FontWeight.Bold, color = Color.White,fontSize = 25.sp)
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Button(
+                        onClick = { if (contador1 > 0) contador1-- },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
+                    ) {
+                        Text(text = "Restar", fontWeight = FontWeight.Bold, color = Color.White,fontSize = 25.sp)
+                    }
+                }
+
+                Spacer(modifier = Modifier.width(30.dp))
+
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Button(
+                        onClick = {},
+                        shape = CircleShape,
+                        modifier = Modifier.size(155.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
+                    ) {
+                        Text(
+                            text = "$contador2",
+                            fontSize = 50.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    Button(
+                        onClick = { contador2++ },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
+                    ) {
+                        Text(text = "Sumar", fontWeight = FontWeight.Bold, color = Color.White, fontSize = 25.sp)
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Button(
+                        onClick = { if (contador2 > 0) contador2-- },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
+                    ) {
+                        Text(text = "Restar", fontWeight = FontWeight.Bold, color = Color.White,fontSize = 25.sp)
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(40.dp))
+
+            Button(
+                onClick = {
+                    contador1 = 0
+                    contador2 = 0
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+            ) {
+                Text(
+                    text = "Borrar",
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    fontSize = 25.sp
+                )
+            }
         }
     }
 }
