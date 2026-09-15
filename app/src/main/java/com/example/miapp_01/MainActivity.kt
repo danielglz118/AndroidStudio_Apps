@@ -24,9 +24,14 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SegmentedButtonDefaults.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -43,6 +48,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.miapp_01.ui.theme.MiAPP_01Theme
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,6 +80,7 @@ class MainActivity : ComponentActivity() {
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                // Contador 1
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Button(
                         onClick = {},
@@ -91,25 +98,40 @@ class MainActivity : ComponentActivity() {
 
                     Spacer(modifier = Modifier.height(20.dp))
 
+                    // Botón Sumar con ícono (+)
                     Button(
                         onClick = { contador1++ },
+                        modifier = Modifier.size(80.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
                     ) {
-                        Text(text = "Sumar", fontWeight = FontWeight.Bold, color = Color.White,fontSize = 25.sp)
+                        Icon(
+                            imageVector = Icons.Filled.Add,
+                            contentDescription = "Sumar",
+                            tint = Color.White,
+                            modifier = Modifier.size(55.dp)
+                        )
                     }
 
                     Spacer(modifier = Modifier.height(10.dp))
 
+                    // Botón Restar con ícono (-)
                     Button(
                         onClick = { if (contador1 > 0) contador1-- },
+                        modifier = Modifier.size(80.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
                     ) {
-                        Text(text = "Restar", fontWeight = FontWeight.Bold, color = Color.White,fontSize = 25.sp)
+                        Icon(
+                            imageVector = Icons.Filled.Remove,
+                            contentDescription = "Restar",
+                            tint = Color.White,
+                            modifier = Modifier.size(55.dp)
+                        )
                     }
                 }
 
                 Spacer(modifier = Modifier.width(30.dp))
 
+                // Contador 2
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Button(
                         onClick = {},
@@ -127,20 +149,34 @@ class MainActivity : ComponentActivity() {
 
                     Spacer(modifier = Modifier.height(20.dp))
 
+                    // Botón Sumar con ícono (+)
                     Button(
                         onClick = { contador2++ },
+                        modifier = Modifier.size(80.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
                     ) {
-                        Text(text = "Sumar", fontWeight = FontWeight.Bold, color = Color.White, fontSize = 25.sp)
+                        Icon(
+                            imageVector = Icons.Filled.Add,
+                            contentDescription = "Sumar",
+                            tint = Color.White,
+                            modifier = Modifier.size(55.dp)
+                        )
                     }
 
                     Spacer(modifier = Modifier.height(10.dp))
 
+                    // Botón Restar con ícono (-)
                     Button(
                         onClick = { if (contador2 > 0) contador2-- },
+                        modifier = Modifier.size(80.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
                     ) {
-                        Text(text = "Restar", fontWeight = FontWeight.Bold, color = Color.White,fontSize = 25.sp)
+                        Icon(
+                            imageVector = Icons.Filled.Remove,
+                            contentDescription = "Restar",
+                            tint = Color.White,
+                            modifier = Modifier.size(55.dp)
+                        )
                     }
                 }
             }
@@ -164,3 +200,4 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
