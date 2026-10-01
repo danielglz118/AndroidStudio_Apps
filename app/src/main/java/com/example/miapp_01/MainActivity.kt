@@ -43,7 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import coil3.compose.AsyncImage
-import navigation.Navigate
+import navigation.NavManager
 
 import com.example.miapp_01.ui.theme.MiAPP_01Theme
 
@@ -54,7 +54,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             MiAPP_01Theme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Navigate()
+                    NavManager()
                 }
             }
         }
