@@ -96,7 +96,11 @@ class MainActivity : ComponentActivity() {
                     style = MaterialTheme.typography.titleMedium
                 )
                 Text("Promedio (últimas 10 > 25°C): ${"%.1f".format(estado.promedio)} °C")
-                Text("Lecturas: ${estado.lecturas.joinToString()}")
+                Text(
+                    "Lecturas: ${
+                        estado.lecturas.joinToString { "%.1f".format(it) }
+                    }"
+                )
 
                 HorizontalDivider()
 

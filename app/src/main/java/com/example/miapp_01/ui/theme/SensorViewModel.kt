@@ -5,6 +5,9 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 
 data class SensorUiState(
     val actual: Double = 0.0,
@@ -40,55 +43,74 @@ class SensorViewModel(
     private var jobContador: Job? = null
 
     fun iniciar() {
-        if (jobSensor?.isActive == true) return
-        _uiState.update { it.copy(monitoreando = true) }
+        fun iniciar() {
+            if (jobSensor?.isActive == true) return
 
-        jobSensor = viewModelScope.launch {
-            // actividad 4 y 7: Combinar Flujos de Temperatura, Humedad y Umbral
-            combine(
-                repo.temperaturaFlow(),
-                repo.humedadFlow(),
-                umbralAlerta
-            ) { temp, hum, umbral ->
-                Triple(temp, hum, umbral)
+            _uiState.update {
+                it.copy(monitoreando = true)
             }
-                //actividad 6: Hasta 3 reintentos
-                .retry(3) { e -> e is IllegalStateException }
-                .map { (temp, hum, umbral) ->
-                    Triple("%.1f".format(temp).toDouble(), "%.1f".format(hum).toDouble(), umbral)
-                }
-                // actividad 2: Filtrar lecturas mayores a 25 °C
-                .filter { (temp, _, _) -> temp > 25.0 }
-                // actividad 2: Evitar valores repetidos consecutivos
-                .distinctUntilChanged()
-                // actividad 6: Captura de errores tras agotar reintentos
-                .catch { e ->
-                    _alertas.emit("Error crítico: ${e.message}")
-                    _uiState.update { it.copy(monitoreando = false) }
-                }
-                .collect { (temp, hum, umbral) ->
-                    // actividad 7: evaluación de alertas según umbral dinámico
-                    if (temp > umbral) {
-                        _alertas.emit("¡Alerta! Temp: $temp °C superó el umbral de $umbral °C")
+
+            jobSensor = viewModelScope.launch {
+                while (isActive) {
+                    try {
+                        combine(
+                            repo.temperaturaFlow(),
+                            repo.humedadFlow(),
+                            umbralAlerta
+                        ) { temp, hum, umbral ->
+                            Triple(temp, hum, umbral)
+                        }
+                            .retry(3) { error ->
+                                error is IllegalStateException
+                            }
+                            .catch { error ->
+                                _alertas.emit(
+                                    "Error del sensor: ${error.message}. " +
+                                            "Se volverá a intentar."
+                                )
+                            }
+                            .collect { (temp, hum, umbral) ->
+                                if (temp > umbral) {
+                                    _alertas.emit(
+                                        "¡Alerta! Temp: $temp °C " +
+                                                "superó el umbral de $umbral °C"
+                                    )
+                                }
+
+                                _uiState.update { estado ->
+                                    val nuevas =
+                                        (estado.lecturas + temp).takeLast(10)
+
+                                    estado.copy(
+                                        actual = temp,
+                                        humedad = hum,
+                                        lecturas = nuevas,
+                                        promedio = nuevas.average()
+                                    )
+                                }
+                            }
+                    } catch (e: CancellationException) {
+                        throw e
                     }
-                    _uiState.update { estado ->
-                        val nuevas = (estado.lecturas + temp).takeLast(10)
-                        estado.copy(
-                            actual = temp,
-                            humedad = hum,
-                            lecturas = nuevas,
-                            promedio = nuevas.average()
-                        )
-                    }
+
+                    delay(1000)
                 }
+            }
         }
     }
 
     // actividad 1: Detener monitoreo cancelando el Job
+
+
     fun detener() {
         jobSensor?.cancel()
-        _uiState.update { it.copy(monitoreando = false) }
+        jobSensor = null
+
+        _uiState.update {
+            it.copy(monitoreando = false)
+        }
     }
+
 
     fun actualizarUmbral(nuevoUmbral: Double) {
         umbralAlerta.value = nuevoUmbral
