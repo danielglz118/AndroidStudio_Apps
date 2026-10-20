@@ -53,6 +53,7 @@ import coil3.compose.AsyncImage
 
 import com.example.miapp_01.ui.theme.MiAPP_01Theme
 import com.example.miapp_01.ui.theme.SensorViewModel
+import kotlinx.coroutines.flow.collectLatest
 
 class MainActivity : ComponentActivity() {
         private val vm: SensorViewModel by viewModels()
@@ -76,7 +77,11 @@ class MainActivity : ComponentActivity() {
         val snackbar = remember { SnackbarHostState() }
 
         LaunchedEffect(Unit) {
-            vm.alertas.collect { snackbar.showSnackbar(it) }
+            vm.alertas.collectLatest { mensaje ->
+                if (mensaje.isNotEmpty()) {
+                    snackbar.showSnackbar(mensaje)
+                }
+            }
         }
 
         Scaffold(snackbarHost = { SnackbarHost(snackbar) }) { padding ->
@@ -88,11 +93,11 @@ class MainActivity : ComponentActivity() {
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Text(
-                    "Temperatura actual: ${estado.actual} °C",
+                    text = "Temperatura actual: ${"%.1f".format(estado.actual)} °C",
                     style = MaterialTheme.typography.headlineSmall
                 )
                 Text(
-                    "Humedad actual: ${estado.humedad} %",
+                    text = "Humedad actual: ${"%.1f".format(estado.humedad)} %",
                     style = MaterialTheme.typography.titleMedium
                 )
                 Text("Promedio (últimas 10 > 25°C): ${"%.1f".format(estado.promedio)} °C")
